@@ -1,11 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  sendEmailVerification,
+  updateProfile,
+} from "firebase/auth";
+import app from "../../Hook/firebaseConfig";
+
+const auth = getAuth(app);
 
 const Registration = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isDisabled, setIsDisabled] = useState(true);
 
   const handleName = (e) => {
     console.log(e.target.value);
@@ -41,7 +51,48 @@ const Registration = () => {
     setPassword(e.target.value);
   };
 
-  const handleRegister = (e) => {};
+  const handleRegister = (e) => {
+    e.preventDefault();
+    if ((name, email, password)) {
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          setError("");
+          console.log(user);
+          updateName();
+          verifyEmail();
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setError(errorMessage + " " + errorCode);
+        });
+    } else {
+      setError("please fill out all input fields");
+      return;
+    }
+  };
+
+  const updateName = () => {
+    updateProfile(auth.currentUser, {
+      displayName: name,
+    })
+      .then(() => {
+        // Profile updated!
+        // ...
+      })
+      .catch((error) => {
+        // An error occurred
+        // ...
+      });
+  };
+
+  const verifyEmail = () => {
+    sendEmailVerification(auth.currentUser).then(() => {
+      // Email verification sent!
+      // ...
+    });
+  };
 
   return (
     <div className="mt-5">
@@ -85,10 +136,15 @@ const Registration = () => {
                   </small>
                 </Link>
               </p>
-              <input className="p-2" type="checkbox" />{" "}
+              <input
+                onClick={() => setIsDisabled(!isDisabled)}
+                className="p-2"
+                type="checkbox"
+              />{" "}
               <span className="mb-3">accept term & condition</span>
               <br />
               <button
+                disabled={isDisabled}
                 onClick={handleRegister}
                 type="submit"
                 className="btn btn-info p-3 w-50 mt-3 fw-bold text-white"
