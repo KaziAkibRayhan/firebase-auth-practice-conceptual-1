@@ -1,7 +1,44 @@
+import { signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { getAuth } from "firebase/auth";
+import app from "../../Hook/firebaseConfig";
+import Swal from "sweetalert2";
 
-const Login = () => {
+const auth = getAuth(app);
+
+const Login = ({ user, setUser }) => {
+  const navigate = useNavigate();
+  const [error, setError] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleEmail = (e) => {
+    setEmail(e.target.value);
+  };
+  const handlePassword = (e) => {
+    setPassword(e.target.value);
+  };
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in
+        const userInfo = userCredential.user;
+        setUser(userInfo);
+        Swal.fire("Good job!", "You clicked the button!", "success");
+        console.log(userInfo);
+        setError("");
+        navigate("/");
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        setError(errorMessage + errorCode);
+      });
+  };
+
   return (
     <div className="mt-5">
       <div className="main-container d-flex container justify-content-between align-items-center">
@@ -13,14 +50,16 @@ const Login = () => {
           />
         </div>
         <div className="register-form  w-100">
-          <p>{"error"}</p>
+          <p>{error}</p>
           <div className="input-box">
             <input
+              onBlur={handleEmail}
               className="form-control p-3 m-2"
               type="email"
               placeholder="Email"
             />
             <input
+              onBlur={handlePassword}
               className="form-control p-3 m-2"
               type="password"
               placeholder="password"
@@ -31,14 +70,21 @@ const Login = () => {
                   are you new? please register
                 </small>
               </Link>
-              <span role="button" className="ms-4 text-primary cursor-pointer">
+              <Link
+                to={"/reset"}
+                role="button"
+                className="ms-4 text-primary cursor-pointer"
+              >
                 Forget Password?
-              </span>
+              </Link>
             </p>
             <input className="p-2" type="checkbox" />{" "}
             <span className="mb-3 ">remember me </span>
             <br />
-            <button className="btn btn-info p-3 w-50 mt-3 fw-bold text-white">
+            <button
+              onClick={handleLogin}
+              className="btn btn-info p-3 w-50 mt-3 fw-bold text-white"
+            >
               Login
             </button>
           </div>

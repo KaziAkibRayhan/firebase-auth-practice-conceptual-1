@@ -12,12 +12,14 @@ import Home from "./components/Home/Home";
 import Login from "./components/Login/Login";
 import Registration from "./components/Registration/Registration";
 import About from "./components/About/About";
+import ResetPassword from "./components/ResetPassword/ResetPassword";
 
 function App() {
+  const [user, setUser] = useState("");
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <Main></Main>,
+      element: <Main user={user} setUser={setUser}></Main>,
       children: [
         {
           path: "/",
@@ -29,11 +31,15 @@ function App() {
         },
         {
           path: "/login",
-          element: <Login></Login>,
+          element: <Login user={user} setUser={setUser}></Login>,
         },
         {
           path: "/registration",
-          element: <Registration></Registration>,
+          element: <Registration user={user} setUser={setUser}></Registration>,
+        },
+        {
+          path: "/reset",
+          element: <ResetPassword />,
         },
         {
           path: "/about",

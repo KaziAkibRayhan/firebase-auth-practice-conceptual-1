@@ -7,10 +7,11 @@ import {
   updateProfile,
 } from "firebase/auth";
 import app from "../../Hook/firebaseConfig";
+import Swal from "sweetalert2";
 
 const auth = getAuth(app);
 
-const Registration = () => {
+const Registration = ({ user, setUser }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -56,9 +57,11 @@ const Registration = () => {
     if ((name, email, password)) {
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-          const user = userCredential.user;
+          const userInfo = userCredential.user;
+          setUser(userInfo);
           setError("");
-          console.log(user);
+          console.log(userInfo);
+          Swal.fire("Good job!", "You clicked the button!", "success");
           updateName();
           verifyEmail();
         })

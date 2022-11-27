@@ -1,8 +1,8 @@
-import React, { useState } from "react";
 import "./Header.css";
 import { Link } from "react-router-dom";
 
-const Header = () => {
+const Header = ({ user, setUser }) => {
+  console.log(user);
   return (
     <div>
       <nav className="d-flex justify-content-around align-items-center bg-secondary p-3 flex-wrap">
@@ -21,24 +21,26 @@ const Header = () => {
             <li className="nav-link items  ms-3 text-info fw-bolder">Login</li>
           </Link> */}
 
-          <li
-            role="button"
-            className="nav-link items  ms-3 text-info fw-bolder"
-          >
-            Logout
-          </li>
-
-          <Link to="/registration" className="text-decoration-none">
-            <li className="nav-link items  ms-3 text-info fw-bolder">
-              Registration
+          {user ? (
+            <li
+              role="button"
+              className="nav-link items  ms-3 text-info fw-bolder"
+            >
+              Logout
             </li>
-          </Link>
+          ) : (
+            <Link to="/registration" className="text-decoration-none">
+              <li className="nav-link items  ms-3 text-info fw-bolder">
+                Registration
+              </li>
+            </Link>
+          )}
 
           <Link to="/about" className="text-decoration-none">
             <li className="nav-link items  ms-3 text-info fw-bolder">About</li>
           </Link>
           <li className="nav-link items  ms-3 text-info fw-bolder">
-            {"user?.displayName"}
+            {user?.displayName}
           </li>
         </div>
       </nav>
